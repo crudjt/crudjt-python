@@ -57,7 +57,12 @@ def read(token: str):
 
     result = json.loads(str_result)
 
-    return result if len(result) > 0 else None
+    # return result if len(result) > 0 else None
+    if len(result) > 0:
+        cache.force_insert(token, result)
+        return result
+    else:
+        None
 
 def update(token, hash, ttl=None, silence_read=None):
     validate_token(token)

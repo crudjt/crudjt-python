@@ -46,6 +46,9 @@ print(CRUD_JT.read(token) is None)
 print(CRUD_JT.update(token, data) == False)
 print(CRUD_JT.delete(token) == False)
 
+print(CRUD_JT.update(token, data) == False)
+print(CRUD_JT.read(token) is None)
+
 print("Checkinh silence read...")
 
 data = {'user_id': 42, 'role': 11}
@@ -109,3 +112,25 @@ for _ in range(10):
     for i in range(REQUESTS):
         CRUD_JT.delete(tokens[i])
     print(f"{time.time() - start_time}")
+
+print('when caches after read from file system')
+LIMIT_ON_READY_FOR_CACHE = 2
+
+previus_tokens = []
+data = {'user_id': 414243, 'role': 11, 'devices': {'ios_expired_at': time.strftime("%Y-%m-%d %H:%M:%S"), 'android_expired_at': time.strftime("%Y-%m-%d %H:%M:%S"), 'mobile_app_expired_at': time.strftime("%Y-%m-%d %H:%M:%S"), 'external_api_integration_expired_at': time.strftime("%Y-%m-%d %H:%M:%S")}, 'a': 42}
+
+# Заповнення previus_values
+for _ in range(REQUESTS):
+    previus_tokens.append(CRUD_JT.create(data))
+
+# Виклик QWE_R.w для кожного запиту
+for _ in range(REQUESTS):
+    CRUD_JT.create(data)
+
+# Бенчмарк
+for _ in range(LIMIT_ON_READY_FOR_CACHE):
+    start_time = time.time()
+    for i in range(REQUESTS):
+        CRUD_JT.read(previus_tokens[i])
+    duration = time.time() - start_time
+    print(f"Execution time: {duration:.6f} seconds")

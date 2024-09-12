@@ -53,5 +53,8 @@ class Cache:
 
         self.cache[key] = hash_token
 
+    def force_insert(self, token, hash):
+        self.cache[token] = hash
+
     def delete(self, token):
         self.cache.pop(token, None)
