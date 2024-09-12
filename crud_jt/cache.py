@@ -1,4 +1,5 @@
 import time
+import math
 from cachetools import LRUCache
 
 class Cache:
@@ -18,11 +19,11 @@ class Cache:
 
             ttl = metadata.get('ttl')
             if ttl:
-                remaining_time = int(ttl - time.time())
+                remaining_time = math.ceil(int(ttl) - int(time.time()))
                 if remaining_time <= 0:
                     self.cache.pop(token, None)
                     return None
-                output.setdefault('metadata', {})['ttl'] = remaining_time + 1
+                output.setdefault('metadata', {})['ttl'] = remaining_time
 
             silence_read = metadata.get('silence_read')
             if silence_read is not None:
