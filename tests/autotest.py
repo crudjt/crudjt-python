@@ -6,6 +6,10 @@ from ctypes import CDLL, c_bool, c_void_p, py_object
 
 from crud_jt import CRUD_JT
 
+CRUD_JT.Config \
+    .encrypted_key('Cm7B68NWsMNNYjzMDREacmpe5sI1o0g40ZC9w1yQW3WOes7Gm59UsittlOHR2dciYiwmaYq98l3tG8h9yXVCxg==') \
+    .start()
+
 print(f"OS: {platform.system()}")
 
 print('Checking without metadata...')

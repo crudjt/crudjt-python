@@ -98,9 +98,18 @@ def _encrypted_key_nif(cipher_key):
 
 def _store_jt_path_nif(cipher_key):
     lib.__store_jt_path(cipher_key.encode('utf-8'))
-
+#
+# encrypted_key('Cm7B68NWsMNNYjzMDREacmpe5sI1o0g40ZC9w1yQW3WOes7Gm59UsittlOHR2dciYiwmaYq98l3tG8h9yXVCxg==')
 
 class Config:
+    # lib2 = ctypes.CDLL(load_store_jt_library())
+    #
+    # lib2.__encrypted_key.argtypes = [ctypes.c_char_p]
+    # lib2.__encrypted_key.restype = None
+    #
+    # lib2.__store_jt_path.argtypes = [ctypes.c_char_p]
+    # lib2.__store_jt_path.restype = None
+
     settings = {}
 
     @classmethod
