@@ -3,18 +3,23 @@ import json
 import msgpack
 
 from .cache import Cache
-from .validations import validate_insertion, validate_token
+from .validations import (
+    validate_insertion,
+    validate_token,
+    validate_encrypted_key,
+    validate_hash_bytesize,
+    error_message,
+    ERROR_ALREADY_STARTED,
+    ERROR_ENCRYPTED_KEY_NOT_SET,
+)
 from .load_store_jt_library import load_store_jt_library
 
-# from .config import Config
+from .errors_map import ERRORS
 
 lib = ctypes.CDLL(load_store_jt_library())
 
-lib.__encrypted_key.argtypes = [ctypes.c_char_p]
-lib.__encrypted_key.restype = None
-
-lib.__store_jt_path.argtypes = [ctypes.c_char_p]
-lib.__store_jt_path.restype = None
+lib.start_store_jt.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
+lib.start_store_jt.restype = ctypes.c_char_p
 
 lib.__create.argtypes = [ctypes.POINTER(ctypes.c_char), ctypes.c_size_t, ctypes.c_int, ctypes.c_int]
 lib.__create.restype = ctypes.c_char_p
@@ -30,7 +35,12 @@ lib.__delete.restype = ctypes.c_bool
 
 cache = Cache(lib.__read)
 
+# print(ERRORS)
+
 def create(hash, ttl=None, silence_read=None):
+    if not Config.was_started():
+        raise ValueError(error_message(ERROR_NOT_STARTED))
+
     validate_insertion(hash, ttl, silence_read)
 
     if ttl is None:
@@ -39,16 +49,22 @@ def create(hash, ttl=None, silence_read=None):
         silence_read = -1
 
     packed_data = msgpack.packb(hash)
+    hash_bytesize = len(packed_data)
+
+    validate_hash_bytesize(hash_bytesize)
 
     buffer = ctypes.create_string_buffer(packed_data)
 
-    token: str = lib.__create(buffer, len(packed_data), ttl, silence_read).decode('utf-8')
+    token: str = lib.__create(buffer, hash_bytesize, ttl, silence_read).decode('utf-8')
 
     cache.insert(token, hash, ttl, silence_read)
 
     return token
 
 def read(token: str):
+    if not Config.was_started():
+        raise ValueError(error_message(ERROR_NOT_STARTED))
+
     validate_token(token)
 
     output = cache.get(token)
@@ -62,14 +78,19 @@ def read(token: str):
 
     result = json.loads(str_result)
 
-    # return result if len(result) > 0 else None
-    if len(result) > 0:
-        cache.force_insert(token, result)
-        return result
-    else:
-        None
+    if not result.get("ok"):
+        code = result.get("code")
+        raise ERRORS.get(code, Exception)(f"Error code: {code}")
+
+    if result.get("data") is None:
+        return
+
+    data = json.loads(result["data"])
 
 def update(token, hash, ttl=None, silence_read=None):
+    if not Config.was_started():
+        raise ValueError(error_message(ERROR_NOT_STARTED))
+
     validate_token(token)
     validate_insertion(hash, ttl, silence_read)
 
@@ -82,39 +103,63 @@ def update(token, hash, ttl=None, silence_read=None):
         cache.insert(token, hash, ttl, silence_read)
 
     packed_data = msgpack.packb(hash)
+    hash_bytesize = len(packed_data)
+
+    validate_hash_bytesize(hash_bytesize)
 
     buffer = ctypes.create_string_buffer(packed_data)
 
-    return lib.__update(token.encode('utf-8'), buffer, len(packed_data), ttl, silence_read)
+    return lib.__update(token.encode('utf-8'), buffer, hash_bytesize, ttl, silence_read)
 
 def delete(token: str):
+    if not Config.was_started():
+        raise ValueError(error_message(ERROR_NOT_STARTED))
+
     validate_token(token)
 
     cache.delete(token)
     return lib.__delete(token.encode('utf-8'))
 
-def _encrypted_key_nif(cipher_key):
-    lib.__encrypted_key(cipher_key.encode('utf-8'))
-
-def _store_jt_path_nif(cipher_key):
-    lib.__store_jt_path(cipher_key.encode('utf-8'))
-
 
 class Config:
     settings = {}
+    _was_started = False
 
     @classmethod
     def encrypted_key(cls, val):
-        cls.settings['encrypted_key'] = val
+        key = val.encode('utf-8')
+        validate_encrypted_key(key)
+        cls.settings["encrypted_key"] = key
         return cls
 
     @classmethod
     def store_jt_path(cls, val):
-        cls.settings['store_jt_path'] = val
+        path = val.encode('utf-8')
+        cls.settings["store_jt_path"] = path
         return cls
 
     @classmethod
+    def was_started(cls):
+        return cls._was_started
+
+    @classmethod
     def start(cls):
-        if 'store_jt_path' in cls.settings:
-            _store_jt_path_nif(cls.settings['store_jt_path'])
-        _encrypted_key_nif(cls.settings['encrypted_key'])
+        if "encrypted_key" not in cls.settings:
+            raise ValueError(error_message(ERROR_ENCRYPTED_KEY_NOT_SET))
+        if cls.was_started():
+            raise ValueError(error_message(ERROR_ALREADY_STARTED))
+
+        # Припускаємо, що start_store_jt повертає JSON-рядок
+        result_raw = lib.start_store_jt(
+            cls.settings["encrypted_key"],
+            cls.settings.get("store_jt_path")  # може бути None
+        )
+
+        result = json.loads(result_raw)
+
+        if not result.get("ok"):
+            code = result.get("code")
+            message = result.get("error_message", "Unknown error")
+            raise ERRORS.get(code, Exception)(message)
+
+        cls._was_started = True

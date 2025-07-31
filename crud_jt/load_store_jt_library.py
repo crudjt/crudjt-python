@@ -44,6 +44,5 @@ def load_store_jt_library():
 # Example usage
 try:
     store_jt_lib = load_store_jt_library()
-    print("Library loaded successfully.")
 except Exception as e:
     print(f"Error loading library: {e}")
