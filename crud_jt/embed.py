@@ -10,6 +10,7 @@ from .validations import (
     validate_hash_bytesize,
     error_message,
     ERROR_ALREADY_STARTED,
+    ERROR_NOT_STARTED,
     ERROR_ENCRYPTED_KEY_NOT_SET,
 )
 from .load_store_jt_library import load_store_jt_library
