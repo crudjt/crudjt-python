@@ -1,6 +1,7 @@
 from .errors import InternalError
+from .errors import DonateException
 
 ERRORS = {
     'XX000': InternalError,
-    # 'XX001': OtherError,
+    'DE000': DonateException
 }

@@ -19,10 +19,6 @@ def error_message(code):
 
 
 def validate_encrypted_key(key: str) -> bool:
-    """
-    Перевіряє, чи ключ є валідним base64-рядком і має правильну довжину після декодування.
-    """
-
     try:
         decoded = base64.b64decode(key, validate=True)
     except (base64.binascii.Error, ValueError):

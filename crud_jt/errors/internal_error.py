@@ -1,3 +1,3 @@
 class InternalError(Exception):
-    """Представляє внутрішню помилку."""
+    """Internal Error"""
     pass

@@ -36,8 +36,6 @@ lib.__delete.restype = ctypes.c_bool
 
 cache = Cache(lib.__read)
 
-# print(ERRORS)
-
 def create(hash, ttl=None, silence_read=None):
     if not Config.was_started():
         raise ValueError(error_message(ERROR_NOT_STARTED))
@@ -150,10 +148,9 @@ class Config:
         if cls.was_started():
             raise ValueError(error_message(ERROR_ALREADY_STARTED))
 
-        # Припускаємо, що start_store_jt повертає JSON-рядок
         result_raw = lib.start_store_jt(
             cls.settings["encrypted_key"],
-            cls.settings.get("store_jt_path")  # може бути None
+            cls.settings.get("store_jt_path")
         )
 
         result = json.loads(result_raw)

@@ -12,6 +12,7 @@ crud_jt.egg-info/dependency_links.txt
 crud_jt.egg-info/requires.txt
 crud_jt.egg-info/top_level.txt
 crud_jt/errors/__init__.py
+crud_jt/errors/donate_exception.py
 crud_jt/errors/internal_error.py
 crud_jt/native/linux/store_jt_arm64.so
 crud_jt/native/linux/store_jt_x86_64.so

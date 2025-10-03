@@ -20,22 +20,18 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      # Крок для отримання коду з репозиторію
       - uses: actions/checkout@v4
 
-      # Крок для налаштування Python
       - name: Set up Python 3
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'  # Встановити бажану версію Python 3.x
+          python-version: '3.x'
 
-      # Встановлення залежностей
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip3 install .
 
-      # Запуск скрипта
       - name: Run autotest
         run: |
           python3 tests/autotest.py

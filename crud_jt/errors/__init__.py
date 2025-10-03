@@ -1,4 +1,4 @@
 from .internal_error import InternalError
-# from .other_error import OtherError  # інші по мірі додавання
+from .donate_exception import DonateException
 
-__all__ = ['InternalError']  # дозволені для імпорту з errors.*
+__all__ = ['InternalError', 'DonateException']
