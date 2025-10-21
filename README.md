@@ -211,7 +211,7 @@ Initializes the CRUD JT and opens the Store JT (**must be called last**)
 # Limits
 The library has the following limits and requirements
 
-- **Ruby version:** tested with 2.7
+- **Python version:** tested with 3.12.5
 - **Supported platforms:** Linux, macOS, Windows (x86_64 / arm64)
 - **Maximum json size per token:** 256 bytes
 - **`encrypted_key` format:** must be Base64
