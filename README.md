@@ -169,7 +169,7 @@ Python 3.13.7
 ## Path Lookup Order
 Stored tokens are placed in the **file system** according to the following order
 
-1. Explicitly set via `CRUD_JT::Config.store_jt_path('custom/path/to/file_system_db')`
+1. Explicitly set via `CRUD_JT.Config.store_jt_path('custom/path/to/file_system_db')`
 2. Default system location
    - **Linux**: `/var/lib/store_jt`
    - **macOS**: `/usr/local/var/store_jt`
