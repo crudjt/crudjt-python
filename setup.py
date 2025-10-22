@@ -4,10 +4,10 @@ from setuptools import setup, find_packages
 
 setup(
     name="crud_jt",
-    version="0.1.0",
+    version="1.0.0.beta.0",
     description="A simple example library",
     author="Vlad Akymov",
-    author_email="exwarvlad@gmail.com",
+    author_email="support@crudjt.com",
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
