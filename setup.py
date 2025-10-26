@@ -8,7 +8,7 @@ this_directory = Path(__file__).parent
 long_description = (this_directory / "NET_MARKDOWN_README.md").read_text()
 
 setup(
-    name="crud_jt",
+    name="crudjt",
     version="1.0.0.beta.0",
     description="Simlifies user session. Login / Logout / Authorization",
     long_description=long_description,

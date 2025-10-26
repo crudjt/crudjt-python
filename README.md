@@ -16,13 +16,13 @@
 # Installation
 
 ```sh
-pip install crud_jt
+pip install crudjt
 ```
 
 Import and configure CRUD JT in your project
 
 ```python
-import crud_jt
+import crudjt
 
 # openssl rand -base64 48 # In your terminal
 # => your_encrypted_base64/48
@@ -186,7 +186,7 @@ Stored tokens are placed in the **file system** according to the following order
 You can configure the library before starting it
 
 ```python
-import crud_jt
+import crudjt
 
 # Required configuration
 CRUD_JT.Config.encrypted_key("some_base64_key")
@@ -224,7 +224,7 @@ The library has the following limits and requirements
 </p>
 
 - **Custom integrations / new features / collaboration**: support@crudjt.com  
-- **Library support & bug reports:** [open an issue](https://github.com/crud_jt/crud_jt-ruby/issues)
+- **Library support & bug reports:** [open an issue](https://github.com/crudjt/crudjt-python/issues)
 
 
 # Lincense
