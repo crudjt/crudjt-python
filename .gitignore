@@ -1,4 +1,4 @@
 build
-crud_jt/__pycache__/
-crud_jt/errors/__pycache__/
-crud_jt.egg-info/
+crudjt/__pycache__/
+crudjt/errors/__pycache__/
+crudjt.egg-info/

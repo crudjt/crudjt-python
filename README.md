@@ -48,20 +48,7 @@ CRUD_JT.create({'user_id': 42, 'role': 11}, ttl)
 ```
 
 ```python
-# with silence_read — silently read the token a specified number of times, then delete it permanently
-silence_read = 3
-
-CRUD_JT.create({'user_id': 42, 'role': 11}, None, silence_read)
-=> 'HBmKFXoXgJ46mCqer1WXyQ'
-```
-
-```python
-# with ttl and silence_read
-ttl = 3600 * 24 * 30
-silence_read = 3
-
-CRUD_JT.create({'user_id': 42, 'role': 11}, ttl, silence_read)
-=> 'HBmKFXoXgJ46mCqer1WXyQ'
+☕ = 🐰🥚
 ```
 
 # R
@@ -91,28 +78,7 @@ CRUD_JT.read('HBmKFXoXgJ46mCqer1WXyQ')
 ```
 
 ```python
-# with silence_read
-CRUD_JT.read('HBmKFXoXgJ46mCqer1WXyQ')
-=> {'metadata': {'silence_read': 2}, 'data': {'user_id': 42, 'role': 11}}
-
-# after 1 read
-CRUD_JT.read('HBmKFXoXgJ46mCqer1WXyQ')
-=> {'metadata': {'silence_read': 1}, 'data': {'user_id': 42, 'role': 11}}
-
-# still one read
-CRUD_JT.read('HBmKFXoXgJ46mCqer1WXyQ')
-=> {'metadata': {'silence_read': 0}, 'data': {'user_id': 42, 'role': 11}}
-
-# ups
-CRUD_JT.read('HBmKFXoXgJ46mCqer1WXyQ')
-=> None
-```
-
-```python
-# with ttl and silence_read
-CRUD_JT.read('HBmKFXoXgJ46mCqer1WXyQ')
-=> {'metadata': {'ttl': 88, 'silence_read': 2}, 'data': {'user_id': 42, 'role': 11}}
-# ...
+# with 🐰🥚
 ```
 
 # U
@@ -123,12 +89,15 @@ CRUD_JT.update('HBmKFXoXgJ46mCqer1WXyQ', { 'user_id': 42, 'role': 8 })
 ```
 
 ```python
-# supports for ttl and/or silence_read
+# supported for ttl and
 ttl = 41
-silence_read = 5
 
-CRUD_JT.update('HBmKFXoXgJ46mCqer1WXyQ', { 'user_id': 42, 'role': 8 }, ttl, silence_read)
-=> True # {'metadata': {'ttl': 41, 'silence_read': 5}, 'data': {'user_id': 42, 'role': 8}}
+CRUD_JT.update('HBmKFXoXgJ46mCqer1WXyQ', { 'user_id': 42, 'role': 8 }, ttl)
+=> True # {'metadata': {'ttl': 41}, 'data': {'user_id': 42, 'role': 8}}
+```
+
+```python
+# supported for 🐰🥚
 ```
 
 ```python
