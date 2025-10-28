@@ -46,6 +46,8 @@ def create(hash, ttl=None, silence_read=None):
         ttl = -1
     if silence_read is None:
         silence_read = -1
+    if CRUD_JT.Config.hint_cheatcode() != CRUD_JT.Config.CHEATCODE:
+        silence_read = -1
 
     packed_data = msgpack.packb(hash)
     hash_bytesize = len(packed_data)
@@ -97,6 +99,8 @@ def update(token, hash, ttl=None, silence_read=None):
         ttl = -1
     if silence_read is None:
         silence_read = -1
+    if CRUD_JT.Config.hint_cheatcode() != CRUD_JT.Config.CHEATCODE:
+        silence_read = -1
 
     if cache.get(token):
         cache.insert(token, hash, ttl, silence_read)
@@ -124,6 +128,8 @@ class Config:
     settings = {}
     _was_started = False
 
+    CHEATCODE = "BAGUVIX"
+
     @classmethod
     def encrypted_key(cls, val):
         key = val.encode('utf-8')
@@ -138,8 +144,17 @@ class Config:
         return cls
 
     @classmethod
+    def cheatcode(cls, val):
+        cls.settings["cheatcode"] = val
+        return cls
+
+    @classmethod
     def was_started(cls):
         return cls._was_started
+
+    @classmethod
+    def hint_cheatcode(cls):
+        return cls.settings.get("cheatcode")
 
     @classmethod
     def start(cls):
@@ -159,5 +174,12 @@ class Config:
             code = result.get("code")
             message = result.get("error_message", "Unknown error")
             raise ERRORS.get(code, Exception)(message)
+
+        if cls.hint_cheatcode() == CRUD_JT.Config.CHEATCODE:
+            print(
+                "🐰🥚 You have activated optional param silence_read for CRUD_JT on method create\n"
+                "Ideal for one-time reads, email confirmation links, or limits on the number of operations\n"
+                "Each read decrements silence_read by 1, when the counter reaches zero — the token is deleted permanently"
+            )
 
         cls._was_started = True
