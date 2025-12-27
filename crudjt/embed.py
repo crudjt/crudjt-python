@@ -16,6 +16,7 @@ from .validations import (
 from .load_store_jt_library import load_store_jt_library
 
 from .errors_map import ERRORS
+from .token_service_impl import TokenServiceImpl
 
 lib = ctypes.CDLL(load_store_jt_library())
 
@@ -158,6 +159,9 @@ class Config:
 
     @classmethod
     def start(cls):
+        server = TokenServiceImpl.call("127.0.0.1:50051")
+        server.start()
+
         if "encrypted_key" not in cls.settings:
             raise ValueError(error_message(ERROR_ENCRYPTED_KEY_NOT_SET))
         if cls.was_started():

@@ -1,1 +1,3 @@
 recursive-include crudjt/native *
+recursive-include crudjt/generated *.py
+recursive-include crudjt *.proto
