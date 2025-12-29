@@ -28,7 +28,7 @@ message ReadTokenResponse {
 }
 
 message UpdateTokenRequest {
-  string token = 1;
+  string packed_data = 1;
   bytes packed_data = 2;
   int64 ttl = 3;
   int64 silence_read = 4;
