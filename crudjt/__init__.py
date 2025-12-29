@@ -1,6 +1,6 @@
 from . import embed
 
-CRUD_JT = embed
+CRUDJT = embed
 import builtins
 
-builtins.CRUD_JT = CRUD_JT
+builtins.CRUDJT = CRUDJT

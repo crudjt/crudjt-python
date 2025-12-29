@@ -6,7 +6,7 @@ from ctypes import CDLL, c_bool, c_void_p, py_object
 
 import crudjt
 
-CRUD_JT.Config.start_master(
+CRUDJT.Config.start_master(
     encrypted_key='Cm7B68NWsMNNYjzMDREacmpe5sI1o0g40ZC9w1yQW3WOes7Gm59UsittlOHR2dciYiwmaYq98l3tG8h9yXVCxg=='
 )
 
@@ -19,69 +19,69 @@ expected_data = {'data': data}
 updated_data = {'user_id': 42, 'role': 8}
 expected_updated_data = {'data': updated_data}
 
-token: str = CRUD_JT.create(data)
+token: str = CRUDJT.create(data)
 
-print(CRUD_JT.read(token) == expected_data)
-print(CRUD_JT.update(token, updated_data) == True)
-print(CRUD_JT.read(token) == expected_updated_data)
-print(CRUD_JT.delete(token) == True)
-print(CRUD_JT.read(token) is None)
+print(CRUDJT.read(token) == expected_data)
+print(CRUDJT.update(token, updated_data) == True)
+print(CRUDJT.read(token) == expected_updated_data)
+print(CRUDJT.delete(token) == True)
+print(CRUDJT.read(token) is None)
 
 print('Checking ttl...')
 
 data = {'user_id': 42, 'role': 11}
 ttl = 5
-token_with_ttl = CRUD_JT.create(data, ttl)
+token_with_ttl = CRUDJT.create(data, ttl)
 
 expected_ttl = ttl
 for _ in range(ttl):
-    print(CRUD_JT.read(token_with_ttl) == json.loads(json.dumps({'metadata': {'ttl': expected_ttl}, 'data': data})))
+    print(CRUDJT.read(token_with_ttl) == json.loads(json.dumps({'metadata': {'ttl': expected_ttl}, 'data': data})))
     expected_ttl -= 1
     time.sleep(1)
 
-print(CRUD_JT.read(token_with_ttl) is None)
+print(CRUDJT.read(token_with_ttl) is None)
 
 print('when expired ttl')
 data = {'user_id': 42, 'role': 11}
 ttl = 1
-token = CRUD_JT.create(data, ttl)
+token = CRUDJT.create(data, ttl)
 time.sleep(ttl)
-print(CRUD_JT.read(token) is None)
-print(CRUD_JT.update(token, data) == False)
-print(CRUD_JT.delete(token) == False)
+print(CRUDJT.read(token) is None)
+print(CRUDJT.update(token, data) == False)
+print(CRUDJT.delete(token) == False)
 
-print(CRUD_JT.update(token, data) == False)
-print(CRUD_JT.read(token) is None)
+print(CRUDJT.update(token, data) == False)
+print(CRUDJT.read(token) is None)
 
 print("Checkinh silence read...")
 
 data = {'user_id': 42, 'role': 11}
 silence_read = 6
-token_with_silence_read = CRUD_JT.create(data, None, silence_read)
+token_with_silence_read = CRUDJT.create(data, None, silence_read)
 
 expected_silence_read = silence_read - 1
 for _ in range(silence_read):
-    print(CRUD_JT.read(token_with_silence_read) == json.loads(json.dumps({'metadata': {'silence_read': expected_silence_read}, 'data': data})))
+    print(CRUDJT.read(token_with_silence_read) == json.loads(json.dumps({'metadata': {'silence_read': expected_silence_read}, 'data': data})))
     expected_silence_read -= 1
 
-print(CRUD_JT.read(token_with_silence_read) is None)
+print(CRUDJT.read(token_with_silence_read) is None)
 
 print("Checking ttl and silence read...")
 
 data = {'user_id': 42, 'role': 11}
 ttl = 5
 silence_read = ttl
-token_with_ttl_and_silence_read = CRUD_JT.create(data, ttl, silence_read)
+token_with_ttl_and_silence_read = CRUDJT.create(data, ttl, silence_read)
 
 expected_ttl = ttl
 expected_silence_read = silence_read - 1
 for _ in range(silence_read):
-    print(CRUD_JT.read(token_with_ttl_and_silence_read) == json.loads(json.dumps({'metadata': {'ttl': expected_ttl, 'silence_read': expected_silence_read}, 'data': data})))
+    print(CRUDJT.read(token_with_ttl_and_silence_read) == json.loads(json.dumps({'metadata': {'ttl': expected_ttl, 'silence_read': expected_silence_read}, 'data': data})))
     expected_ttl -= 1
     expected_silence_read -= 1
     time.sleep(1)
 
-print(CRUD_JT.read(token_with_ttl_and_silence_read) is None)
+print(CRUDJT.read(token_with_ttl_and_silence_read) is None)
 
 REQUESTS = 40_000
 
@@ -95,26 +95,26 @@ for _ in range(10):
     print('when creates 40k tokens with TurboQueue')
     start_time = time.time()
     for i in range(REQUESTS):
-        tokens.append(CRUD_JT.create(data))
+        tokens.append(CRUDJT.create(data))
     print(f"{time.time() - start_time}")
 
     print('when reads 40k tokens')
     index = random.randint(0, REQUESTS - 1)
     start_time = time.time()
     for i in range(REQUESTS):
-        CRUD_JT.read(tokens[index])
+        CRUDJT.read(tokens[index])
     print(f"{time.time() - start_time}")
 
     print('when updates 40k tokens')
     start_time = time.time()
     for i in range(REQUESTS):
-        CRUD_JT.update(tokens[i], updated_data)
+        CRUDJT.update(tokens[i], updated_data)
     print(f"{time.time() - start_time}")
 
     print('when deletes 40k tokens')
     start_time = time.time()
     for i in range(REQUESTS):
-        CRUD_JT.delete(tokens[i])
+        CRUDJT.delete(tokens[i])
     print(f"{time.time() - start_time}")
 
 print('when caches after read from file system')
@@ -124,14 +124,14 @@ previus_tokens = []
 data = {'user_id': 414243, 'role': 11, 'devices': {'ios_expired_at': time.strftime("%Y-%m-%d %H:%M:%S"), 'android_expired_at': time.strftime("%Y-%m-%d %H:%M:%S"), 'mobile_app_expired_at': time.strftime("%Y-%m-%d %H:%M:%S"), 'external_api_integration_expired_at': time.strftime("%Y-%m-%d %H:%M:%S")}, 'a': 42}
 
 for _ in range(REQUESTS):
-    previus_tokens.append(CRUD_JT.create(data))
+    previus_tokens.append(CRUDJT.create(data))
 
 for _ in range(REQUESTS):
-    CRUD_JT.create(data)
+    CRUDJT.create(data)
 
 for _ in range(LIMIT_ON_READY_FOR_CACHE):
     start_time = time.time()
     for i in range(REQUESTS):
-        CRUD_JT.read(previus_tokens[i])
+        CRUDJT.read(previus_tokens[i])
     duration = time.time() - start_time
     print(f"Execution time: {duration:.6f} seconds")

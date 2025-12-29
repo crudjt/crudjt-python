@@ -69,7 +69,7 @@ def original_create(hash, ttl=None, silence_read=None):
     return token
 
 def create(hash, ttl=None, silence_read=None):
-    if CRUD_JT.Config.master():
+    if CRUDJT.Config.master():
         return original_create(hash, ttl, silence_read)
     else:
         # token_service.proto expect int64/32 values
@@ -80,7 +80,7 @@ def create(hash, ttl=None, silence_read=None):
         if silence_read is None:
             silence_read = -1
 
-        response = CRUD_JT.Config.grpc_client().stub.CreateToken(
+        response = CRUDJT.Config.grpc_client().stub.CreateToken(
             token_service_pb2.CreateTokenRequest(
                 packed_data=msgpack.packb(hash),
                 ttl=ttl,
@@ -116,10 +116,10 @@ def original_read(token: str):
     return json.loads(result["data"])
 
 def read(token: str):
-    if CRUD_JT.Config.master():
+    if CRUDJT.Config.master():
         return original_read(token)
     else:
-        response = CRUD_JT.Config.grpc_client().stub.ReadToken(token_service_pb2.ReadTokenRequest(token=token))
+        response = CRUDJT.Config.grpc_client().stub.ReadToken(token_service_pb2.ReadTokenRequest(token=token))
 
         return msgpack.unpackb(response.packed_data)
 
@@ -135,8 +135,6 @@ def original_update(token, hash, ttl=None, silence_read=None):
         ttl = -1
     if silence_read is None:
         silence_read = -1
-    if CRUD_JT.Config.hint_cheatcode() != CRUD_JT.Config.CHEATCODE:
-        silence_read = -1
 
     if cache.get(token):
         cache.insert(token, hash, ttl, silence_read)
@@ -151,7 +149,7 @@ def original_update(token, hash, ttl=None, silence_read=None):
     return lib.__update(token.encode('utf-8'), buffer, hash_bytesize, ttl, silence_read)
 
 def update(token, hash, ttl=None, silence_read=None):
-    if CRUD_JT.Config.master():
+    if CRUDJT.Config.master():
         return original_update(token, hash, ttl, silence_read)
     else:
         # token_service.proto expect int64/32 values
@@ -162,7 +160,7 @@ def update(token, hash, ttl=None, silence_read=None):
         if silence_read is None:
             silence_read = -1
 
-        response = CRUD_JT.Config.grpc_client().stub.UpdateToken(
+        response = CRUDJT.Config.grpc_client().stub.UpdateToken(
             token_service_pb2.UpdateTokenRequest(
                 token=token,
                 packed_data=msgpack.packb(hash),
@@ -182,10 +180,10 @@ def original_delete(token: str):
     return lib.__delete(token.encode('utf-8'))
 
 def delete(token: str):
-    if CRUD_JT.Config.master():
+    if CRUDJT.Config.master():
         return original_delete(token)
     else:
-        response = CRUD_JT.Config.grpc_client().stub.DeleteToken(token_service_pb2.DeleteTokenRequest(token=token))
+        response = CRUDJT.Config.grpc_client().stub.DeleteToken(token_service_pb2.DeleteTokenRequest(token=token))
 
         return response.result
 

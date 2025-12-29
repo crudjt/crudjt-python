@@ -1,7 +1,7 @@
 from .errors import InternalError
-from .errors import DonateException
+from .errors import InvalidState
 
 ERRORS = {
     'XX000': InternalError,
-    'DE000': DonateException
+    '55JT01': InvalidState
 }

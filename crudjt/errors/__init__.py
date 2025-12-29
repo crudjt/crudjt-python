@@ -1,4 +1,4 @@
 from .internal_error import InternalError
-from .donate_exception import DonateException
+from .invalid_state import InvalidState
 
-__all__ = ['InternalError', 'DonateException']
+__all__ = ['InternalError', 'InvalidState']

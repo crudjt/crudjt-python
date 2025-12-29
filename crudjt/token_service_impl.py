@@ -32,7 +32,7 @@ class TokenServiceImpl(token_service_pb2_grpc.TokenServiceServicer):
         ttl = None if ttl == -1 else ttl
         silence_read = None if silence_read == -1 else silence_read
 
-        token = CRUD_JT.original_create(
+        token = CRUDJT.original_create(
             packed_data,
             ttl=ttl,
             silence_read=silence_read
@@ -43,7 +43,7 @@ class TokenServiceImpl(token_service_pb2_grpc.TokenServiceServicer):
     def ReadToken(self, request, context):
         raw_token = request.token
 
-        result_hash = CRUD_JT.original_read(raw_token)
+        result_hash = CRUDJT.original_read(raw_token)
         packed_data = msgpack.packb(result_hash, use_bin_type=True)
 
         return token_service_pb2.ReadTokenResponse(
@@ -60,7 +60,7 @@ class TokenServiceImpl(token_service_pb2_grpc.TokenServiceServicer):
         ttl = None if ttl == -1 else ttl
         silence_read = None if silence_read == -1 else silence_read
 
-        result = CRUD_JT.original_update(
+        result = CRUDJT.original_update(
             raw_token,
             packed_data,
             ttl=ttl,
@@ -72,6 +72,6 @@ class TokenServiceImpl(token_service_pb2_grpc.TokenServiceServicer):
     def DeleteToken(self, request, context):
         raw_token = request.token
 
-        result = CRUD_JT.original_delete(raw_token)
+        result = CRUDJT.original_delete(raw_token)
 
         return token_service_pb2.DeleteTokenResponse(result=result)
