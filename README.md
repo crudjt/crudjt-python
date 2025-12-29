@@ -90,7 +90,6 @@ CRUDJT.update('HBmKFXoXgJ46mCqer1WXyQ', { 'user_id': 42, 'role': 8 })
 
 # D
 ```python
-# when token exist
 CRUDJT.delete('HBmKFXoXgJ46mCqer1WXyQ')
 => True
 ```
