@@ -196,27 +196,8 @@ class Config:
     _grpc_client = None
     _master = False
 
-    CHEATCODE = "BAGUVIX"
     GRPC_HOST = "127.0.0.1"
     GRPC_PORT = 50051
-
-    @classmethod
-    def encrypted_key(cls, val):
-        key = val.encode('utf-8')
-        validate_encrypted_key(key)
-        cls.settings["encrypted_key"] = key
-        return cls
-
-    @classmethod
-    def store_jt_path(cls, val):
-        path = val.encode('utf-8')
-        cls.settings["store_jt_path"] = path
-        return cls
-
-    @classmethod
-    def cheatcode(cls, val):
-        cls.settings["cheatcode"] = val
-        return cls
 
     @classmethod
     def was_started(cls):
@@ -229,49 +210,6 @@ class Config:
     @classmethod
     def grpc_client(cls):
         return cls._grpc_client
-
-    @classmethod
-    def hint_cheatcode(cls):
-        return cls.settings.get("cheatcode")
-
-    @classmethod
-    def start(cls):
-        cls._grpc_client = GrpcClient("127.0.0.1:50051")
-
-        threading.Thread(
-            target=lambda: (
-                server := TokenServiceImpl.call("127.0.0.1:50051"),
-                server.start(),
-                server.wait_for_termination()
-            ),
-            daemon=True
-        ).start()
-
-        if "encrypted_key" not in cls.settings:
-            raise ValueError(error_message(ERROR_ENCRYPTED_KEY_NOT_SET))
-        if cls.was_started():
-            raise ValueError(error_message(ERROR_ALREADY_STARTED))
-
-        result_raw = lib.start_store_jt(
-            cls.settings["encrypted_key"],
-            cls.settings.get("store_jt_path")
-        )
-
-        result = json.loads(result_raw)
-
-        if not result.get("ok"):
-            code = result.get("code")
-            message = result.get("error_message", "Unknown error")
-            raise ERRORS.get(code, Exception)(message)
-
-        if cls.hint_cheatcode() == CRUD_JT.Config.CHEATCODE:
-            print(
-                "🐰🥚 You have activated optional param silence_read for CRUD_JT on method create\n"
-                "Ideal for one-time reads, email confirmation links, or limits on the number of operations\n"
-                "Each read decrements silence_read by 1, when the counter reaches zero — the token is deleted permanently"
-            )
-
-        cls._was_started = True
 
     @classmethod
     def start_master(cls, **options):
