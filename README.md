@@ -14,7 +14,7 @@
   </a>
 </p>
 
-> ⚠️ Version 1.0.0-beta — production testing phase   
+> ⚠️ Version 1.0.0b0 — production testing phase   
 > API is stable. Feedback is welcome before the final 1.0.0 release
 
 Fast B-tree–backed token store for stateful user sessions  
@@ -63,7 +63,7 @@ CRUDJT.Config.start_master(
 *Important: Use the same `encrypted_key` across all sessions. If the key changes, previously stored tokens cannot be decrypted and will return `nil` or `false`*
 
 ## Start CRUDJT master in Docker
-> `docker-compose.yml` will be published after 1.0.0-beta Docker image builds
+> `docker-compose.yml` will be published after 1.0.0b0 Docker image builds
 
 ## Connect to an existing CRUDJT master
 
@@ -154,12 +154,12 @@ result = CRUDJT.delete('HBmKFXoXgJ46mCqer1WXyQ')
 ```
 
 # Performance
-> Metrics will be published after 1.0.0-beta GitHub Actions builds
+> Metrics will be published after 1.0.0b0 GitHub Actions builds
 
 # Storage (File-backed)  
 
 ## Disk footprint  
-> Metrics will be published after 1.0.0-beta GitHub Actions builds
+> Metrics will be published after 1.0.0b0 GitHub Actions builds
 
 ## Path Lookup Order
 Stored tokens are placed in the **file system** according to the following order
