@@ -10,6 +10,11 @@ from ctypes import CDLL, c_bool, c_void_p, py_object
 
 import crudjt
 import os
+import sys
+
+if os.environ.get('CRUDJT_AUTOTEST_ALLOWED') != 'true':
+    print("Denied run autotest for this environment. Set os.environ['CRUDJT_AUTOTEST_ALLOWED'] = 'true'")
+    sys.exit(0)
 
 CRUDJT.Config.start_master(
   encrypted_key=os.environ['CRUDJT_ENCRYPTED_KEY'],
