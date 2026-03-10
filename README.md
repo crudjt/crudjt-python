@@ -1,10 +1,11 @@
 <p align="center">
-  <img src="logos/crud_jt_logo_black.png#gh-light-mode-only" alt="Logo Light" />
-  <img src="logos/crud_jt_logo.png#gh-dark-mode-only" alt="Logo Dark" />
-</p>
-
-<p align="center">
-  Fast, file-backed JSON token for REST APIs with multi-process support
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="logos/crudjt_logo_white_on_dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="logos/crudjt_logo_dark_on_white.svg">
+    <img alt="Shows a dark logo" src="logos/crudjt_logo_dark.png">
+  </picture>
+    </br>
+    Python SDK for the fast, file-backed, scalable JSON token engine
 </p>
 
 <p align="center">
@@ -13,8 +14,12 @@
   </a>
 </p>
 
-## Why?  
-[Escape the JWT trap: predictable login, safe logout](https://medium.com/@CoffeeMainer/jwt-trap-login-logout-under-control-7f4495d6024d)
+> ⚠️ Version 1.0.0-beta — production testing phase   
+> API is stable. Feedback is welcome before the final 1.0.0 release
+
+Fast B-tree–backed token store for stateful user sessions  
+Provides authentication and authorization across multiple processes  
+Optimized for vertical scaling on a single server  
 
 # Installation
 
@@ -22,22 +27,52 @@
 pip install crudjt
 ```
 
-Start CRUDJT master in your project
+## How to use
+
+- One process starts the master
+- All other processes connect to it
+
+## Start CRUDJT master (once)
+
+Start the CRUDJT master when your application boots
+
+Only **one process** can do this for a **single token storage**  
+
+The master process manages sessions and coordination    
+All functions can also be used directly from it
+
+### Generate an encrypted key (terminal)
+
+```sh
+export CRUDJT_ENCRYPTED_KEY=$(openssl rand -base64 48)
+```
+
+### Start master (python)
 
 ```python
 import crudjt
+import os
 
-# openssl rand -base64 48 # In your terminal
-# => your_encrypted_base64/48
 CRUDJT.Config.start_master(
-  encrypted_key='your_encrypted_base64/32/48/64',
-  store_jt_path='your_path_to_file_storage', # optional
+  encrypted_key=os.environ['CRUDJT_ENCRYPTED_KEY'],
+  store_jt_path='path/to/local/storage', # optional
   grpc_host='127.0.0.1', # default
   grpc_port=50051 # default
 )
 ```
+*Important: Use the same `encrypted_key` across all sessions. If the key changes, previously stored tokens cannot be decrypted and will return `nil` or `false`*
 
-Or connect to master
+## Start CRUDJT master in Docker
+> `docker-compose.yml` will be published after 1.0.0-beta Docker image builds
+
+## Connect to an existing CRUDJT master
+
+Use this in all other processes  
+
+Typical examples:
+- multiple local processes
+- background jobs
+- forked processes
 
 ```python
 import crudjt
@@ -48,81 +83,83 @@ CRUDJT.Config.connect_to_master(
 )
 ```
 
+### Process layout
+
+App boot  
+ ├─ Process A → start_master  
+ ├─ Process B → connect_to_master  
+ └─ Process C → connect_to_master  
+
 # C
 
 ```python
 data = {'user_id': 42, 'role': 11} # required
-ttl = 3600 * 24 * 30 # optional # Dynamic time to live token in seconds
+ttl = 3600 * 24 * 30 # optional: token lifetime (seconds)
 
-# Optional # Each read decrements silence_read by 1, when the counter reaches
-# zero — the token is deleted permanently
+# Optional: read limit
+# Each read decrements the counter
+# When it reaches zero — the token is deleted
 silence_read = 10
 
-CRUDJT.create(data, ttl, silence_read)
-=> 'HBmKFXoXgJ46mCqer1WXyQ'
+token = CRUDJT.create(data, ttl, silence_read)
+# token == 'HBmKFXoXgJ46mCqer1WXyQ'
+```
+
+```python
+# To disable token expiration or read limits, pass `None`
+CRUDJT.create({'user_id': 42, 'role': 11}, None, None)
 ```
 
 # R
 
 ```python
-CRUDJT.read('HBmKFXoXgJ46mCqer1WXyQ')
-=> {'metadata': {'ttl': 101001, 'silence_read': 9}, 'data': {'user_id': 42, 'role': 11}}
+result = CRUDJT.read('HBmKFXoXgJ46mCqer1WXyQ')
+# result == {'metadata': {'ttl': 101001, 'silence_read': 9}, 'data': {'user_id': 42, 'role': 11}}
 ```
 
 ```python
-# when expired/not found token
-CRUDJT.read('HBmKFXoXgJ46mCqer1WXyQ')
-=> None
+# When expired or not found token
+result = CRUDJT.read('HBmKFXoXgJ46mCqer1WXyQ')
+# result == None
 ```
 
 # U
 
 ```python
-CRUDJT.update('HBmKFXoXgJ46mCqer1WXyQ', {'user_id': 42, 'role': 8 }, 600, 100)
-=> True # {'metadata': {'ttl': 600, 'silence_read': 100}, 'data': {'user_id': 42, 'role': 8}}
+data = {'user_id': 42, 'role': 8}
+# `None` disables limits
+ttl = 600
+silence_read = 100
+
+result = CRUDJT.update('HBmKFXoXgJ46mCqer1WXyQ', data, ttl, silence_read)
+# result == True
 ```
 
 ```python
-# when expired/not found token
-CRUDJT.update('HBmKFXoXgJ46mCqer1WXyQ', { 'user_id': 42, 'role': 8 })
-=> False
+# When expired or not found token
+result = CRUDJT.update('HBmKFXoXgJ46mCqer1WXyQ', { 'user_id': 42, 'role': 8 })
+# result == False
 ```
 
 # D
 ```python
-CRUDJT.delete('HBmKFXoXgJ46mCqer1WXyQ')
-=> True
+result = CRUDJT.delete('HBmKFXoXgJ46mCqer1WXyQ')
+# result == True
 ```
 
 ```python
-# when expired/not found token
-CRUDJT.delete('HBmKFXoXgJ46mCqer1WXyQ')
-=> False
+# When expired or not found token
+result = CRUDJT.delete('HBmKFXoXgJ46mCqer1WXyQ')
+# result == False
 ```
 
 # Performance
-**40k** requests of **256 bytes** — median over 10 runs  
-ARM64 (Apple M1+), macOS 15.5/Darwin Kernel Version 24.6.0  
-Python 3.13.7
-
-| Function | CRUDJT (Python) | JWT (Python) | redis-session-store (Ruby, Rails 8.0.4) |
-|----------|-------|------|------|
-| C        | `0.308 second` ![Logo Favicon Light](logos/crud_jt_logo_favicon_white.png#gh-light-mode-only) ![Logo Favicon Dark](logos/crud_jt_logo_favicon_black.png#gh-dark-mode-only) | 0.367 second | 4.057 seconds |
-| R        | `0.181 second` ![Logo Favicon Light](logos/crud_jt_logo_favicon_white.png#gh-light-mode-only) ![Logo Favicon Dark](logos/crud_jt_logo_favicon_black.png#gh-dark-mode-only) | 0.432 second | 7.011 seconds |
-| U        | `0.409 second` ![Logo Favicon Light](logos/crud_jt_logo_favicon_white.png#gh-light-mode-only) ![Logo Favicon Dark](logos/crud_jt_logo_favicon_black.png#gh-dark-mode-only) | X | 3.49 seconds |
-| D        | `0.19 second` ![Logo Favicon Light](logos/crud_jt_logo_favicon_white.png#gh-light-mode-only) ![Logo Favicon Dark](logos/crud_jt_logo_favicon_black.png#gh-dark-mode-only) | X | 6.589 seconds |
-
-[Full benchmark results](https://github.com/Cm7B68NWsMNNYjzMDREacmpe5sI1o0g40ZC9w1y/benchmarks)
+> Metrics will be published after 1.0.0-beta GitHub Actions builds
 
 # Storage (File-backed)  
 
 ## Disk footprint  
-**40k** tokens of **256 bytes** each — median over 10 creates  
-darwin23, APFS  
-
-`48 MB`  
-
-[Full disk footprint results](https://github.com/Cm7B68NWsMNNYjzMDREacmpe5sI1o0g40ZC9w1y/disk_footprint)
+> Metrics will be published after 1.0.0-beta GitHub Actions builds
 
 ## Path Lookup Order
 Stored tokens are placed in the **file system** according to the following order
@@ -135,8 +172,8 @@ Stored tokens are placed in the **file system** according to the following order
 3. Project root directory (fallback)
 
 ## Storage Characteristics
-* Store JT **automatically removing expired tokens** every 24 hours without blocking the main thread   
-* **Store JT automatically fsyncs every 500ms**, meanwhile tokens ​​are available from cache
+* CRUDJT **automatically removing expired tokens** after start and every 24 hours without blocking the main thread   
+* **Storage automatically fsyncs every 500ms**, meanwhile tokens ​​are available from cache
 
 # Multi-process Coordination
 For multi-process scenarios, CRUDJT uses gRPC over an insecure local port for same-host communication only. It is not intended for inter-machine or internet-facing usage
@@ -152,8 +189,11 @@ The library has the following limits and requirements
 
 # Contact & Support
 <p align="center">
-  <img src="logos/crud_jt_logo_favicon_black_160.png#gh-light-mode-only" alt="Visit Light" />
-  <img src="logos/crud_jt_logo_favicon_white_160.png#gh-dark-mode-only" alt="Visit Dark" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="logos/crudjt_favicon_160x160_white_on_dark.svg" width=160 height=160>
+    <source media="(prefers-color-scheme: light)" srcset="logos/crudjt_favicon_160x160_dark_on_white.svg" width=160 height=160>
+    <img alt="Shows a dark favicon in light color mode and a white one in dark color mode" src="logos/crudjt_favicon_160x160_white.png" width=160 height=160>
+  </picture>
 </p>
 
 - **Custom integrations / new features / collaboration**: support@crudjt.com  

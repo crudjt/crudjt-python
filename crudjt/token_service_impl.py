@@ -18,7 +18,6 @@ class TokenServiceImpl(token_service_pb2_grpc.TokenServiceServicer):
         )
 
         server.add_insecure_port(port)
-        print("Starting gRPC on 127.0.0.1:50051")
 
         return server
 

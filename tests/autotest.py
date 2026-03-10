@@ -5,9 +5,13 @@ import platform
 from ctypes import CDLL, c_bool, c_void_p, py_object
 
 import crudjt
+import os
 
 CRUDJT.Config.start_master(
-    encrypted_key='Cm7B68NWsMNNYjzMDREacmpe5sI1o0g40ZC9w1yQW3WOes7Gm59UsittlOHR2dciYiwmaYq98l3tG8h9yXVCxg=='
+  encrypted_key=os.environ['CRUDJT_ENCRYPTED_KEY'],
+  store_jt_path='your_path_to_file_storage', # optional
+  grpc_host='127.0.0.1', # default
+  grpc_port=50051 # default
 )
 
 print(f"OS: {platform.system()}")
