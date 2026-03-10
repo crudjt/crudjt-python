@@ -34,5 +34,7 @@ jobs:
           pip3 install .
 
       - name: Run autotest
+        env:
+          CRUDJT_AUTOTEST_ALLOWED: true
         run: |
           python3 tests/autotest.py

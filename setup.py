@@ -18,7 +18,8 @@ setup(
     install_requires=[
         "msgpack>=1.0,<2",
         "cachetools>=5,<6",
-        "grpcio>=1.60,<2"
+        "grpcio>=1.60,<2",
+        "protobuf>=6.0,<7.0"
     ],
     project_urls={
         "Documentation": "https://github.com/crudjt/crudjt-python#readme",
