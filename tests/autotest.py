@@ -17,7 +17,7 @@ if os.environ.get('CRUDJT_AUTOTEST_ALLOWED') != 'true':
     sys.exit(0)
 
 CRUDJT.Config.start_master(
-  encrypted_key='Cm7B68NWsMNNYjzMDREacmpe5sI1o0g40ZC9w1yQW3WOes7Gm59UsittlOHR2dciYiwmaYq98l3tG8h9yXVCxg==',
+  secret_key='Cm7B68NWsMNNYjzMDREacmpe5sI1o0g40ZC9w1yQW3WOes7Gm59UsittlOHR2dciYiwmaYq98l3tG8h9yXVCxg==',
   store_jt_path='your_path_to_file_storage', # optional
   grpc_host='127.0.0.1', # default
   grpc_port=50051 # default

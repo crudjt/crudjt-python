@@ -8,28 +8,28 @@ U64_MAX = 2**64 - 1
 
 ERROR_ALREADY_STARTED = 0
 ERROR_NOT_STARTED = 1
-ERROR_ENCRYPTED_KEY_NOT_SET = 2
+ERROR_SECRET_KEY_NOT_SET = 2
 
 MAX_HASH_SIZE = 256
 
 ERROR_MESSAGES = {
     ERROR_ALREADY_STARTED: "CRUDJT already started",
     ERROR_NOT_STARTED: "CRUDJT has not started",
-    ERROR_ENCRYPTED_KEY_NOT_SET: "Encrypted key is blank",
+    ERROR_SECRET_KEY_NOT_SET: "Secret key is blank",
 }
 
 def error_message(code):
     return ERROR_MESSAGES.get(code, f"Unknown error ({code})")
 
 
-def validate_encrypted_key(key: str) -> bool:
+def validate_secret_key(key: str) -> bool:
     try:
         decoded = base64.b64decode(key, validate=True)
     except (base64.binascii.Error, ValueError):
-        raise ValueError("'encrypted_key' must be a valid Base64 string")
+        raise ValueError("'secret_key' must be a valid Base64 string")
 
     if len(decoded) not in (32, 48, 64):
-        raise ValueError(f"'encrypted_key' must be exactly 32, 48, or 64 bytes. Got {len(decoded)} bytes")
+        raise ValueError(f"'secret_key' must be exactly 32, 48, or 64 bytes. Got {len(decoded)} bytes")
 
     return True
 

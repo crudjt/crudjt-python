@@ -12,12 +12,12 @@ from .cache import Cache
 from .validations import (
     validate_insertion,
     validate_token,
-    validate_encrypted_key,
+    validate_secret_key,
     validate_hash_bytesize,
     error_message,
     ERROR_ALREADY_STARTED,
     ERROR_NOT_STARTED,
-    ERROR_ENCRYPTED_KEY_NOT_SET,
+    ERROR_SECRET_KEY_NOT_SET,
 )
 from .load_store_jt_library import load_store_jt_library
 
@@ -215,14 +215,13 @@ class Config:
 
     @classmethod
     def start_master(cls, **options):
-        if options.get("encrypted_key") is None:
-            raise ValueError(error_message(ERROR_ENCRYPTED_KEY_NOT_SET))
+        if options.get("secret_key") is None:
+            raise ValueError(error_message(ERROR_SECRET_KEY_NOT_SET))
         if cls.was_started():
             raise ValueError(error_message(ERROR_ALREADY_STARTED))
 
-        validate_encrypted_key(options.get("encrypted_key"))
+        validate_secret_key(options.get("secret_key"))
 
-        cls.settings["encrypted_key"] = options.get("encrypted_key").encode('utf-8')
         cls.settings["store_jt_path"] = options.get("store_jt_path")
         if cls.settings["store_jt_path"]:
             cls.settings["store_jt_path"] = cls.settings["store_jt_path"].encode('utf-8')
@@ -230,7 +229,7 @@ class Config:
         cls.settings["grpc_port"] = options.get("grpc_port", cls.GRPC_PORT)
 
         result_raw = lib.start_store_jt(
-            cls.settings["encrypted_key"],
+            options.get("secret_key").encode('utf-8'),
             cls.settings.get("store_jt_path")
         )
 
