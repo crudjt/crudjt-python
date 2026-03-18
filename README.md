@@ -1,16 +1,16 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="logos/crudjt_logo_white_on_dark.svg">
-    <source media="(prefers-color-scheme: light)" srcset="logos/crudjt_logo_dark_on_white.svg">
-    <img alt="Shows a dark logo" src="logos/crudjt_logo_dark.png">
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/crudjt/crudjt-ruby/master/logos/crudjt_logo_white_on_dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/crudjt/crudjt-ruby/master/logos/crudjt_logo_dark_on_white.svg">
+    <img alt="Shows a dark logo" src="https://raw.githubusercontent.com/crudjt/crudjt-ruby/master/logos/crudjt_logo_dark.png">
   </picture>
     </br>
-    Python SDK for the fast, file-backed, scalable JSON token engine
+    Ruby SDK for the fast, file-backed, scalable JSON token engine
 </p>
 
 <p align="center">
   <a href="https://www.patreon.com/crudjt">
-    <img src="logos/buy_me_a_coffee_orange.svg" alt="Buy Me a Coffee"/>
+    <img src="https://github.com/crudjt/crudjt-ruby/raw/master/logos/buy_me_a_coffee_orange.svg" alt="Buy Me a Coffee"/>
   </a>
 </p>
 
@@ -190,9 +190,9 @@ The library has the following limits and requirements
 # Contact & Support
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="logos/crudjt_favicon_160x160_white_on_dark.svg" width=160 height=160>
-    <source media="(prefers-color-scheme: light)" srcset="logos/crudjt_favicon_160x160_dark_on_white.svg" width=160 height=160>
-    <img alt="Shows a dark favicon in light color mode and a white one in dark color mode" src="logos/crudjt_favicon_160x160_white.png" width=160 height=160>
+    <source media="(prefers-color-scheme: dark)" srcset="lhttps://raw.githubusercontent.com/crudjt/crudjt-ruby/master/logos/crudjt_favicon_160x160_white_on_dark.svg" width=160 height=160>
+    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/crudjt/crudjt-ruby/master/logos/crudjt_favicon_160x160_dark_on_white.svg" width=160 height=160>
+    <img alt="Shows a dark favicon in light color mode and a white one in dark color mode" src="https://raw.githubusercontent.com/crudjt/crudjt-ruby/master/logos/crudjt_favicon_160x160_white.png" width=160 height=160>
   </picture>
 </p>
 
