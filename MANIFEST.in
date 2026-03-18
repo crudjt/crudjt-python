@@ -1,4 +1,4 @@
 recursive-include crudjt/native *
 recursive-include crudjt/generated *.py
 recursive-include crudjt *.proto
-recursive-include logos *
+recursive-include crudjt/logos *
