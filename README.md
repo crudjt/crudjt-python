@@ -182,9 +182,10 @@ result = CRUDJT.delete('HBmKFXoXgJ46mCqer1WXyQ')
 ```
 
 # Performance
-**40k** requests of **256 bytes** each — median over 10 runs  
-ARM64 (Apple M1+), macOS 15.7.4  
-Python 3.13.7
+**40 000** requests up to **256 bytes** — median over 10 runs  
+macOS 15.7.4, ARM64 (Apple M1)  
+Python 3.13.7  
+In-process benchmark; Redis accessed via localhost TCP
 
 | Function | CRUDJT (Python) | JWT (Python) | redis-session-store (Ruby, Rails 8.0.2.1) |
 |----------|-------|------|------|
