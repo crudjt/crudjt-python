@@ -52,7 +52,7 @@ export CRUDJT_SECRET_KEY=$(openssl rand -base64 48)
 ### Start master (python)
 
 ```python
-import crudjt
+from crudjt import CRUDJT
 import os
 
 CRUDJT.Config.start_master(
@@ -103,7 +103,7 @@ Typical examples:
 - forked processes
 
 ```python
-import crudjt
+from crudjt import CRUDJT
 
 CRUDJT.Config.connect_to_master(
   grpc_host='127.0.0.1', # default
