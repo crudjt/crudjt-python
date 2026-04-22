@@ -6,7 +6,7 @@ long_description = (this_directory / "README.md").read_text(encoding="utf-8")
 
 setup(
     name="crudjt",
-    version="1.0.0",
+    version="1.0.1",
     description="Fast B-tree–backed token store for stateful sessions",
     long_description=long_description,
     long_description_content_type='text/markdown',
